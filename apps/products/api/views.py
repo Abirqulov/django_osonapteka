@@ -24,14 +24,14 @@ class InternationalNameListView(generics.ListAPIView):
 
 class ManufacturerListView(generics.ListAPIView):
     serializer_class = ManufactureSerializer
-    queryset = Manufacturer.objects.order_by('name_uz').all()
+    queryset = Manufacturer.objects.order_by('name').all()
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
-    search_fields = ['name_uz', 'name_ru']
+    search_fields = ['name']
 
 
 class ReleaseFormListView(generics.ListAPIView):
     serializer_class = ReleaseFormSerializer
-    queryset = Manufacturer.objects.order_by('name_uz').all()
+    queryset = ReleaseForm.objects.order_by('name_uz').all()
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     search_fields = ['name_uz', 'name_ru']
 

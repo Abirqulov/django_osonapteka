@@ -19,7 +19,7 @@ class RegionListSerializer(serializers.ModelSerializer):
 class ManufactureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manufacturer
-        fields = ('id', 'name_uz', 'name_ru')
+        fields = ('id', 'name')
 
 
 class ReleaseFormSerializer(serializers.ModelSerializer):
