@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'location_field.apps.DefaultConfig',
     'ckeditor',
+    'django_filters',
 ] + APPS
 
 

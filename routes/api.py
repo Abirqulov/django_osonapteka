@@ -4,7 +4,7 @@ from apps.products.api.views import *
 
 urlpatterns = [
     path('regions/', RegionListView.as_view()),
-    path('drugs/', DrugListView.as_view(), name='drugs')
+    # path('drugs/', DrugListView.as_view(), name='drugs')
 ]
 
 
