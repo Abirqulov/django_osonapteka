@@ -54,6 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -152,14 +153,13 @@ from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ('uz', _('Uzbek')),
-    ('en', _('English')),
     ('ru', _('Russian'))
 ]
 
+LANGUAGE_CODE = 'uz'
+
 # Internationalization
 # https://docs.djangmoproject.com/en/3.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -168,6 +168,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
 
 
 # Static files (CSS, JavaScript, Images)

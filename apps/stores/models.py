@@ -6,6 +6,15 @@ from location_field.models.spatial import LocationField
 
 # Create your models here.
 
+class StoreManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=True).filter(other=False)
+
+
+class OtherManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=True).filter(other=True)
+
 
 class Store(models.Model):
     name = models.CharField(max_length=120)
@@ -16,6 +25,11 @@ class Store(models.Model):
                              default=Point(41.0, 69.0))
     region = models.ForeignKey(Regions, on_delete=models.DO_NOTHING, null=True, blank=True)
     status = models.BooleanField(default=True)
+    other = models.BooleanField(default=False)
+
+    objects = models.Manager()
+    actives = StoreManager()
+    others = OtherManager()
 
     def __str__(self):
         return self.name

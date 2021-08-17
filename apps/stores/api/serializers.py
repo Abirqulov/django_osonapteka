@@ -23,3 +23,24 @@ class RegionListSerializer(serializers.ModelSerializer):
 
     def get_coords(self, obj):
         return obj.polygon.centroid.coords
+
+
+class StoreSerializer(serializers.ModelSerializer):
+    distance = serializers.SerializerMethodField(read_only=True)
+    orders_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Store
+        fields = ["id", "name", "image", "address", "phone", "location", "distance", "orders_count"]
+
+    def get_distance(self, obj):
+        if hasattr(obj, 'distance'):
+            return round(obj.distance, 1)
+        else:
+            return None
+
+    def get_orders_count(self, obj):
+        if hasattr(obj, 'orders_count'):
+            return round(obj.orders_count, 1)
+        else:
+            return None

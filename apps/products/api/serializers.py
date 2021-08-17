@@ -4,6 +4,13 @@ from apps.stores.models import Remain
 from rest_framework import serializers
 
 
+def get_language(request):
+    lan = request.GET.get('lan')
+    if lan is None:
+        lan = 'uz'
+    return lan
+
+
 class RegionListSerializer(serializers.ModelSerializer):
     childs = serializers.SerializerMethodField(read_only=True)
 
@@ -19,7 +26,7 @@ class RegionListSerializer(serializers.ModelSerializer):
 class ManufactureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manufacturer
-        fields = ('id', 'name')
+        fields = ('id', 'name_uz', 'name_ru')
 
 
 class ReleaseFormSerializer(serializers.ModelSerializer):
@@ -58,15 +65,13 @@ class DrugListSerializer(serializers.ModelSerializer):
     pharm_group = PharmGroupSerializer(many=False, read_only=True)
     release_form = ReleaseFormSerializer(many=False, read_only=True)
     remains = serializers.SerializerMethodField()
-    image = serializers.SerializerMethodField()
-    price = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
 
     class Meta:
         model = Drug
         fields = ["id", 'manufacture', 'international_name', 'pharm_group', 'release_form',
-                  'remains', 'image', 'price', 'name', 'description', 'barcode', 'slug']
+                  'remains', 'image', 'price', 'name', 'description', 'barcode', 'slug', 'region']
 
     def get_name(self, drug):
         try:
@@ -78,19 +83,21 @@ class DrugListSerializer(serializers.ModelSerializer):
                     name = drug.name_ru
             return name
         except:
-            return drug.name
+            return drug.name_uz
 
     def get_description(self, drug):
         request = self.context.get('request')
-        lan = request.GET("lan", "ru")
+        lan = request.GET.get("lan", "ru")
         description = getattr(drug, 'description_' + lan)
 
         return description
 
     def get_remains(self, obj):
         request = self.context.get('request')
-        if request.user.group.filter(name="manager").exists():
+        if request.user.groups.filter(name="manager").exists():
             remains = RemainSerializer(obj.remains.filter(qty__gt=0, store__status=True), many=True, read_only=True).data
             return remains
         else:
             return []
+
+
