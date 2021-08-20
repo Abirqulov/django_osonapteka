@@ -1,6 +1,7 @@
 from django.db import models
 from account.models import User
 from apps.products.models import Drug
+from apps.stores.models import *
 from django.contrib.gis.geos import Point
 from location_field.models.spatial import LocationField
 
@@ -22,3 +23,12 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='orders_item')
     drug = models.ForeignKey(Drug, blank=True, null=True, on_delete=models.DO_NOTHING, related_name='orders_item')
+    store = models.ForeignKey(Store, null=True, on_delete=models.DO_NOTHING, related_name="order_items")
+    qty = models.IntegerField(default=0)
+    price = models.FloatField(null=True, blank=True)
+    subtotal = models.FloatField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
+
+    def __str__(self):
+        return self.drug.name_uz
