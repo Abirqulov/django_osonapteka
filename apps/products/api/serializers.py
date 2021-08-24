@@ -1,44 +1,25 @@
-from ..models import Regions, Drug, Manufacturer, InternationalName, ReleaseForm, PharmGroup
+from ..models import Drug, Manufacturer, InternationalName, ReleaseForm, PharmGroup, Category
 from django.db.models import Q
-from apps.stores.models import Remain
+from apps.stores.models import Remain, Region
 from rest_framework import serializers
 
 
-def get_language(request):
-    lan = request.GET.get('lan')
-    if lan is None:
-        lan = 'uz'
-    return lan
-
-
-class RegionListSerializer(serializers.ModelSerializer):
+class CategoryListSerializers(serializers.ModelSerializer):
     childs = serializers.SerializerMethodField(read_only=True)
-    name = serializers.SerializerMethodField()
 
     class Meta:
-        model = Regions
-        fields = ['name', 'slug', 'childs']
+        model = Category
+        fields = ['id', 'name', 'childs', 'image', 'slug']
 
     def get_childs(self, instance):
-        childs = instance.childs.all().order_by('name_uz')
-        request = self.context.get('request')
-        return RegionListSerializer(childs, many=True, context={'request': request}).data
+        childs = instance.objects.all().order_by('name')
+        return CategoryListSerializers(childs, many=True).data
 
-    def get_name(self, region_name):
-        try:
-            request = self.context.get('request')
-            lan = request.GET.get('lan', 'uz')
-            name = region_name.name_uz
-            if lan == 'ru':
-                name = region_name.name_ru
-                return name
-            elif lan == 'uz':
-                name = region_name.name_uz
-                return name
-            else:
-                return name
-        except:
-            return region_name.name_uz
+
+class CategorySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'image']
 
 
 class ManufacturerSerializer(serializers.ModelSerializer):
@@ -130,12 +111,13 @@ class RemainSerializer(serializers.ModelSerializer):
         return obj.store.name
 
 
-class DrugListSerializer(serializers.ModelSerializer):
-    region = RegionListSerializer(many=False, read_only=True)
+class DrugSerializer(serializers.ModelSerializer):
+    category = CategorySerializers(many=True, read_only=True)
     manufacture = ManufacturerSerializer(many=False, read_only=True)
     international_name = InternationalNameSerializer(many=False, read_only=True)
     pharm_group = PharmGroupSerializer(many=False, read_only=True)
     release_form = ReleaseFormSerializer(many=False, read_only=True)
+    price = serializers.SerializerMethodField(read_only=True)
     remains = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     description = serializers.SerializerMethodField()
@@ -143,7 +125,14 @@ class DrugListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Drug
         fields = ["id", 'manufacture', 'international_name', 'pharm_group', 'release_form',
-                  'remains', 'image', 'price', 'name', 'description', 'barcode', 'slug', 'region']
+                  'remains', 'image', 'price', 'name', 'description', 'barcode', 'slug', 'category', 'status']
+
+    def get_remains(self, obj):
+        request = self.context.get('request')
+        if request.user.groups.filter(name='manager').exists():
+            return RemainSerializer(obj.remains.filter(qty__gt=0), many=True, read_only=True).data
+        else:
+            return []
 
     def get_name(self, drug):
         try:
@@ -161,19 +150,42 @@ class DrugListSerializer(serializers.ModelSerializer):
         except:
             return drug.name_uz
 
-    def get_description(self, drug):
+    def get_description(self,obj):
         request = self.context.get('request')
-        lan = request.GET.get("lan", "ru")
-        description = getattr(drug, 'description_' + lan)
+        lan = request.GET.get("lan")
+        description = obj.description_uz
+        if lan == "uz":
+            description = obj.description_uz
+            return description
+        elif lan == "ru":
+            description = obj.description_ru
+            return description
+        else:
+            return description
 
-        return description
+    def get_price(self, obj):
+        if hasattr(obj, 'price') and obj.price is not None:
+            return obj.price
+        else:
+            return 0.0
+
+class DrugListSerializer(serializers.ModelSerializer):
+    manufacturer = ManufacturerSerializer(many=False, read_only=True)
+    price = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Drug
+    fields = ['id', 'name', 'slug', 'barcode', 'image', 'remains', 'price']
 
     def get_remains(self, obj):
         request = self.context.get('request')
-        if request.user.groups.filter(name="manager").exists():
-            remains = RemainSerializer(obj.remains.filter(qty__gt=0, store__status=True), many=True, read_only=True).data
-            return remains
+        if request.user.groups.filter(name='manager').exists():
+            return RemainSerializer(obj.remains.filter(qty__gt=0), many=True, read_only=True).data
         else:
             return []
 
-
+    def get_price(self, obj):
+        if hasattr(obj, 'price'):
+            return obj.price
+        else:
+            return 0.0

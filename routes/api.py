@@ -4,7 +4,6 @@ from apps.stores.api.views import *
 from apps.orders.api.views import *
 
 urlpatterns = [
-    path('regions/', RegionListView.as_view()),
     path('drugs/', DrugListView.as_view(), name='drugs'),
     path('drugs/<int:pk>/', DrugDetailView.as_view()),
 

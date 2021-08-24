@@ -26,8 +26,7 @@ urlpatterns = [
 
 ]
 
-urlpatterns += i18n_patterns(
+urlpatterns += [
     path('', include('account.urls')),
     path('api/', include('routes.api')),
-    prefix_default_language=False,
-)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

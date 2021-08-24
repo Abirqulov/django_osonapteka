@@ -168,10 +168,11 @@ from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ('uz', _('Uzbek')),
-    ('ru', _('Russian'))
+    ('ru', _('Russian')),
+    ('en', _('English')),
 ]
 
-LANGUAGE_CODE = 'uz'
+LANGUAGE_CODE = 'en-us'
 
 # Internationalization
 # https://docs.djangmoproject.com/en/3.1/topics/i18n/

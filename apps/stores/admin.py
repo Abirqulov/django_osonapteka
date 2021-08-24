@@ -3,4 +3,5 @@ from .models import *
 # Register your models here.
 
 admin.site.register(Store)
+admin.site.register(Region)
 admin.site.register(Remain)
