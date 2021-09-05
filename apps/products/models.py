@@ -58,7 +58,6 @@ class DrugObjectsManager(models.Manager):
         return super().get_queryset().all()
 
 
-
 class DrugManager(models.Manager):
     def get_queryset(self, region=(1,)):
 

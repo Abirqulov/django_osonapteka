@@ -150,7 +150,7 @@ class DrugSerializer(serializers.ModelSerializer):
         except:
             return drug.name_uz
 
-    def get_description(self,obj):
+    def get_description(self, obj):
         request = self.context.get('request')
         lan = request.GET.get("lan")
         description = obj.description_uz
