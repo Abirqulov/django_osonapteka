@@ -12,7 +12,7 @@ class CategoryListSerializers(serializers.ModelSerializer):
         fields = ['id', 'name', 'childs', 'image', 'slug']
 
     def get_childs(self, instance):
-        childs = instance.objects.all().order_by('name')
+        childs = instance.childs.all().order_by('name')
         return CategoryListSerializers(childs, many=True).data
 
 
@@ -168,6 +168,7 @@ class DrugSerializer(serializers.ModelSerializer):
             return obj.price
         else:
             return 0.0
+
 
 class DrugListSerializer(serializers.ModelSerializer):
     manufacturer = ManufacturerSerializer(many=False, read_only=True)

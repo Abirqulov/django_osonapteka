@@ -6,6 +6,7 @@ from apps.orders.api.views import *
 urlpatterns = [
     path('drugs/', DrugListView.as_view(), name='drugs'),
     path('drugs/<int:pk>/', DrugDetailView.as_view()),
+    path('category/', CategoryListView.as_view()),
 
     path('stores/', StoreListView.as_view()),
     path('regions/', RegionListView.as_view()),

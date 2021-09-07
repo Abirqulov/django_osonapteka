@@ -24,7 +24,6 @@ class Store(models.Model):
     address_ru = models.CharField(max_length=150, null=True)
     phone = models.CharField(max_length=120)
     location = LocationField(srid=4326, geography=True, null=True, based_fields=['address'], zoom=7, default=Point(41.0, 69.0))
-    region = models.ForeignKey(Region, on_delete=models.DO_NOTHING, null=True, blank=True)
     status = models.BooleanField(default=True)
     other = models.BooleanField(default=False)
 
