@@ -101,4 +101,4 @@ class Drug(models.Model):
     products = DrugManager()
 
     def __str__(self):
-        return self.name_uz
+        return self.name

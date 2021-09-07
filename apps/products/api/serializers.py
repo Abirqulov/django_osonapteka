@@ -169,7 +169,6 @@ class DrugSerializer(serializers.ModelSerializer):
         else:
             return 0.0
 
-
 class DrugListSerializer(serializers.ModelSerializer):
     manufacturer = ManufacturerSerializer(many=False, read_only=True)
     price = serializers.SerializerMethodField()
